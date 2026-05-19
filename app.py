@@ -1,20 +1,15 @@
 import os
 import cv2
+import numpy as np
 from flask import Flask, render_template, request, redirect, flash
 
-app = Flask(__name__)
+app = Flask(_name_)
 app.secret_key = "makyaj_v2_gizli_anahtar_9988"
 
 # Genişletilmiş ve güvenli uzantı listesi
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'heic', 'gif', 'webp'}
 
-UPLOAD_FOLDER = 'uploads'
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 def allowed_file(filename):
-    # Uzantıyı ne olursa olsun küçük harfe çevirir, büyük harf hatasını çözer
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -34,10 +29,11 @@ def analyze():
             return render_template('index.html', error="Hiçbir dosya seçilmedi.")
             
         if file and allowed_file(file.filename):
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(file_path)
+            # --- RAM KORUMA AYARI BURAYA EKLENDİ ---
+            # Fotoğrafı diske kaydetmeden direkt hafızada byte olarak okuyoruz
+            file_bytes = np.fromstring(file.read(), np.uint8)
+            image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
             
-            image = cv2.imread(file_path)
             if image is None:
                 return render_template('index.html', error="Fotoğraf dosyası bozuk veya okunamadı. Başka bir resim deneyin.")
             
@@ -45,12 +41,11 @@ def analyze():
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             faces = face_cascade.detectMultiScale(gray, 1.1, 4)
             
-            # Yüz bulunamazsa çökme koruması
+            # Yüz bulunamazsa koruma
             if len(faces) == 0:
-                os.remove(file_path)
                 return render_template('index.html', error="Fotoğrafta net bir yüz tespit edilemedi. Lütfen yüzünüzün net göründüğü bir fotoğraf yükleyin.")
             
-            # --- V2 ACIMASIZ PUANLAMA ALGORİTMASI ---
+            # --- SENİN ORİJİNAL PUANLAMA ALGORİTMAN (DOKUNULMADI) ---
             (x, y, w, h) = faces[0]
             base_calc = (w * h + x + y) % 50
             
@@ -65,7 +60,7 @@ def analyze():
             if toplam_skor > 10.0: toplam_skor = 9.5
             if toplam_skor < 1.0: toplam_skor = 3.2
 
-            # --- DOBLA VE KABA JÜRİ YORUMLARI ---
+            # --- SENİN ORİJİNAL DOBLA JÜRİ YORUMLARIN (DOKUNULMADI) ---
             if toplam_skor >= 8.5:
                 juri_notu = "Fena değil, makyajı gerçekten profesyonelce yapmışsın. Işıltın göz alıyor!"
             elif toplam_skor >= 7.0:
@@ -74,8 +69,6 @@ def analyze():
                 juri_notu = "Yani... Aynaya bakmadan mı yaptın naptın? Parçalar uyuşmamış, aceleye gelmiş gibi."
             else:
                 juri_notu = "Acele lavaboda bu kadar oluyor herhalde. Renkler birbirine girmiş, acilen silip baştan başlamalısın! Kötü olmuş."
-
-            os.remove(file_path)
             
             return render_template('result.html', 
                                    score=toplam_skor, 
@@ -92,5 +85,5 @@ def analyze():
         print(f"KRİTİK HATA ENGELLENDİ: {e}")
         return render_template('index.html', error="Analiz sırasında teknik bir pürüz oluştu. Lütfen tekrar deneyin.")
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     app.run(debug=True)
