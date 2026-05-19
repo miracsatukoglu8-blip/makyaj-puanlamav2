@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from flask import Flask, render_template, request, redirect, flash
 
-app = Flask(_name_)
+app = Flask(__name__)
 app.secret_key = "makyaj_v2_gizli_anahtar_9988"
 
 # Genişletilmiş ve güvenli uzantı listesi
@@ -85,5 +85,5 @@ def analyze():
         print(f"KRİTİK HATA ENGELLENDİ: {e}")
         return render_template('index.html', error="Analiz sırasında teknik bir pürüz oluştu. Lütfen tekrar deneyin.")
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run(debug=True)
