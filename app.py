@@ -1,6 +1,6 @@
 import os
 import cv2
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, url_parser, flash
 
 app = Flask(__name__)
 app.secret_key = "makyaj_v2_gizli_anahtar_9988"
