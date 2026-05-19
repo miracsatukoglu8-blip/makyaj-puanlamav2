@@ -29,13 +29,21 @@ def analyze():
             return render_template('index.html', error="Hiçbir dosya seçilmedi.")
             
         if file and allowed_file(file.filename):
-            # --- RAM KORUMA AYARI BURAYA EKLENDİ ---
-            # Fotoğrafı diske kaydetmeden direkt hafızada byte olarak okuyoruz
+            # --- RAM KORUMA VE FOTOĞRAF KALİTESİNİ DÜŞÜRME AYARI ---
             file_bytes = np.fromstring(file.read(), np.uint8)
             image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
             
             if image is None:
                 return render_template('index.html', error="Fotoğraf dosyası bozuk veya okunamadı. Başka bir resim deneyin.")
+            
+            # Eğer fotoğraf çok büyükse kalitesini/boyutunu sunucu koruması için düşürür
+            max_boyut = 1000
+            h, w = image.shape[:2]
+            if max(h, w) > max_boyut:
+                oran = max_boyut / float(max(h, w))
+                yeni_w = int(w * oran)
+                yeni_h = int(h * oran)
+                image = cv2.resize(image, (yeni_w, yeni_h), interpolation=cv2.INTER_AREA)
             
             face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
