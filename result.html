@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analiz Sonuçları</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffe5ec, #ffc2d1);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 { color: #ff477e; margin-bottom: 20px; }
+        
+        .score-box {
+            background: #fff0f3;
+            border: 2px dashed #ff477e;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 32px;
+            font-weight: bold;
+            color: #ff477e;
+            margin-bottom: 25px;
+        }
+        
+        .details-list {
+            text-align: left;
+            margin-bottom: 25px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+            color: #495057;
+            font-size: 15px;
+        }
+        .detail-item:last-child { border-bottom: none; }
+        .val { font-weight: bold; color: #ff7096; }
+        
+        .btn-back {
+            display: inline-block;
+            background: #ff477e;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: 0.3s;
+            width: 80%;
+        }
+        .btn-back:hover { background: #ff7096; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Analiz Raporu 📊</h1>
+    
+    <div class="score-box">
+        Genel Puan: {{ score }} / 10
+    </div>
+
+    <div style="background: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 12px; border-radius: 10px; font-size: 14px; margin-bottom: 20px; font-weight: 500; font-style: italic;">
+        💬 Jüri Yorumu: "{{ yorum }}"
+    </div>
+    
+    <div class="details-list">
+        <div class="detail-item"><span>👁️ Göz Makyajı Uyumu:</span> <span class="val">{{ goz }} / 10</span></div>
+        <div class="detail-item"><span>🎨 Ten Rengi Dengesi:</span> <span class="val">{{ ten }} / 10</span></div>
+        <div class="detail-item"><span>💄 Ruj ve Dudak Konturu:</span> <span class="val">{{ ruj }} / 10</span></div>
+        <div class="detail-item"><span>✨ Far ve Gölgelendirme:</span> <span class="val">{{ far }} / 10</span></div>
+    </div>
+    
+    <a href="/" class="btn-back">🔄 Yeni Fotoğraf Dene</a>
+</div>
+
+</body>
+</html>
